@@ -2,8 +2,12 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'  // Configure Maven in Jenkins tools
-        jdk 'JDK'      // Configure JDK in Jenkins tools
+        maven 'Maven'  // Ensure Maven is configured in Jenkins
+        jdk 'JDK'      // Ensure JDK 17 is configured in Jenkins
+    }
+
+    environment {
+        IMAGE_NAME = "xeeshanakram/simple-app"
     }
 
     stages {
@@ -25,22 +29,24 @@ pipeline {
             }
         }
 
-        stage('docker built and Push to Docker Hub') {
+        stage('Build & Push Docker Image') {
             steps {
                 withDockerRegistry([ credentialsId: 'docker', url: '' ]) {
                     sh '''
-                            docker build -t simple-app .
-                            docker tag simple-app xeeshanakram/simple-app:latest
-                            docker push xeeshanakram/simple-app:latest
+                        docker build -t $IMAGE_NAME:${BUILD_NUMBER} .
+                        docker tag $IMAGE_NAME:${BUILD_NUMBER} $IMAGE_NAME:latest
+                        docker push $IMAGE_NAME:${BUILD_NUMBER}
+                        docker push $IMAGE_NAME:latest
                     '''
                 }
             }
         }
 
-        stage('Deploy to Docker') {
+        stage('Deploy Docker Container') {
             steps {
                 sh '''
-                    docker run -d -p 8081:8080 --name simple-app XEESHANAKRAM/simple-app:${BUILD_NUMBER}
+                    docker rm -f simple-app || true
+                    docker run -d -p 8081:8080 --name simple-app $IMAGE_NAME:${BUILD_NUMBER}
                 '''
             }
         }
