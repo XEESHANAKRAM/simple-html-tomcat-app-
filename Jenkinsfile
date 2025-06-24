@@ -15,7 +15,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-username/simple-html-tomcat-app.git'
+                git 'https://github.com/XEESHANAKRAM/simple-html-tomcat-app.git'
             }
         }
 
@@ -28,14 +28,14 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("yourdockerhub/simple-html-app:${BUILD_NUMBER}")
+                    dockerImage = docker.build("XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}")
                 }
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                withDockerRegistry([ credentialsId: 'dockerhub-creds', url: '' ]) {
+                withDockerRegistry([ credentialsId: 'docker', url: '' ]) {
                     script {
                         dockerImage.push()
                     }
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 sh '''
                     docker rm -f simple-html-app || true
-                    docker run -d -p 8080:8080 --name simple-html-app yourdockerhub/simple-html-app:${BUILD_NUMBER}
+                    docker run -d -p 8080:8080 --name simple-html-app XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}
                 '''
             }
         }
