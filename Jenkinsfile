@@ -28,20 +28,21 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}")
+                    docker built -t simple-html-app .
                 }
             }
         }
 
-        stage('Push to Docker Hub') {
-            steps {
-                withDockerRegistry([ credentialsId: 'docker', url: '' ]) {
-                    script {
-                        dockerImage.push()
-                    }
-                }
-            }
+       stage('Push to Docker Hub') {
+    steps {
+        withDockerRegistry([ credentialsId: 'docker', url: '' ]) {
+            sh '''
+                docker tag simple-html-app XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}
+                docker push XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}
+            '''
         }
+    }
+}
 
         stage('Deploy to Docker') {
             steps {
