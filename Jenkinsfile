@@ -13,9 +13,9 @@ pipeline {
             }
         }
 
-        stage('Checkout') {
+        stage('git') {
             steps {
-                git 'https://github.com/XEESHANAKRAM/simple-html-tomcat-app.git'
+                git branch: 'main', url: 'https://github.com/XEESHANAKRAM/simple-html-tomcat-app-.git'
             }
         }
 
