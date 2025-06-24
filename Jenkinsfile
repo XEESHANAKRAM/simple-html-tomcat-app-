@@ -25,18 +25,13 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t simple-html-app .'
-            }
-        }
-
-        stage('Push to Docker Hub') {
+        stage('docker built and Push to Docker Hub') {
             steps {
                 withDockerRegistry([ credentialsId: 'docker', url: '' ]) {
                     sh '''
-                        docker tag simple-html-app XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}
-                        docker push XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}
+                            docker build -t simple-app .
+                            docker tag simple-app xeeshanakram/simple-app:latest
+                            docker push xeeshanakram/simple-app:latest
                     '''
                 }
             }
@@ -45,8 +40,7 @@ pipeline {
         stage('Deploy to Docker') {
             steps {
                 sh '''
-                    docker rm -f simple-html-app || true
-                    docker run -d -p 8081:8080 --name simple-html-app XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}
+                    docker run -d -p 8081:8080 --name simple-app XEESHANAKRAM/simple-app:${BUILD_NUMBER}
                 '''
             }
         }
