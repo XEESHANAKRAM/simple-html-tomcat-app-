@@ -47,7 +47,7 @@ pipeline {
             steps {
                 sh '''
                     docker rm -f simple-html-app || true
-                    docker run -d -p 8080:8080 --name simple-html-app XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}
+                    docker run -d -p 8081:8081 --name simple-html-app XEESHANAKRAM/simple-html-app:${BUILD_NUMBER}
                 '''
             }
         }
